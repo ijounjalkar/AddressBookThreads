@@ -150,14 +150,15 @@ public class AddressBookDB {
 	 * @param phone
 	 * @param email
 	 * @param date
+	 * @param addId 
 	 * @param addName
 	 * @param type
 	 * @return
 	 * @throws com.addressbookdb.DatabaseException
 	 * @throws SQLException
 	 */
-	public Contact addContact(String fname, String lname, String address, String zip, String city, String state,
-			long phone, String email, LocalDate date, String addName, String type)
+	public Contact addContact(String fname, String lname, String address, long zip, String city, String state,
+			long phone, String email, LocalDate date, int addId, String addName, String type)
 			throws com.capg.addressBookService.DatabaseException, SQLException {
 		int contactId = -1;
 		Connection connection = null;
@@ -171,7 +172,7 @@ public class AddressBookDB {
 		try (Statement statement = connection.createStatement()) {
 			String sql = String.format("INSERT INTO contact_table (fname, lname, address,zip,city,state,phone,email,date) "
                                        + "VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s')",
-                                       fname, lname, address, Long.parseLong(zip), city, state, phone, email, date);
+                                       fname, lname, address, zip, city, state, phone, email, date);
 			int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
 			if (rowAffected == 1) {
 				ResultSet resultSet = statement.getGeneratedKeys();
@@ -191,7 +192,7 @@ public class AddressBookDB {
 					contactId, addName, type);
 			int rowAffected = statement.executeUpdate(sql);
 			if (rowAffected == 1) {
-				contact = new Contact(fname, lname, address, city, state, Long.parseLong(zip), phone,
+				contact = new Contact(fname, lname, address, city, state, zip, phone,
 						email);
 			}
 		} catch (SQLException e) {

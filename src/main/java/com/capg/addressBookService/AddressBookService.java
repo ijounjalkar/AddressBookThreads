@@ -147,9 +147,10 @@ public class AddressBookService {
 	 * Usecase16: Retrieve data from the database
 	 * 
 	 * @throws DatabaseException
+	 * @throws SQLException 
 	 */
-	public List<Contact> readContactData(IOService ioService) throws DatabaseException {
-		if (ioService.equals(IOService.DB_IO)) {
+	public List<Contact> readContactData(IOService dbIo) throws DatabaseException, SQLException {
+		if (dbIo.equals(IOService.DB_IO)) {
 			this.contactList = addressBookDB.readData();
 		}
 		return this.contactList;
@@ -243,7 +244,7 @@ public class AddressBookService {
 		});
 	}
 
-	private void addContactDB(String fname, String lname, String address, String zip, String city, String state,
+	private void addContactDB(String fname, String lname, String address, long zip, String city, String state,
 			long phone, String email, LocalDate date,int addId, String addName, String type)
                               throws com.capg.addressBookService.DatabaseException, SQLException {
 		this.contactList.add(addressBookDB.addContact(fname, lname, address, zip, city, state, phone, email, date,
