@@ -155,5 +155,18 @@ public class AddressBookTest {
 		long count = addService.countEntries(IOService.REST_IO);
 		assertEquals(3, count);
 	}
-	
+	@Test 
+	public void givenNewPhoneForContact_WhenUpdated_ShouldMatch200Request() throws DatabaseException, SQLException {
+		Contact[] arrayOfContact = getContactList();
+		AddressBookService addService = new AddressBookService(Arrays.asList(arrayOfContact));
+		addService.updatePersonsPhone("Tushar",952269856,IOService.REST_IO);
+		Contact contact = addService.getContact("Tushar");
+		String contactJson = new Gson().toJson(contact);
+		RequestSpecification request = RestAssured.given();
+		request.header("Content-Type","application/json");
+		request.body(contactJson);
+		Response response = request.put("/contact/"+contact.id);
+		int statusCode = response.getStatusCode();
+		assertEquals(200,statusCode);			
+	}
 }
