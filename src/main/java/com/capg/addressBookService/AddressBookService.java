@@ -149,7 +149,7 @@ public class AddressBookService {
 	 * @throws DatabaseException
 	 * @throws SQLException 
 	 */
-	public List<Contact> readContactData(IOService dbIo) throws DatabaseException, SQLException {
+	public List<Contact> readContactData(com.capg.addressBookService.AddressBookMain.IOService dbIo) throws DatabaseException, SQLException {
 		if (dbIo.equals(IOService.DB_IO)) {
 			this.contactList = addressBookDB.readData();
 		}
@@ -251,9 +251,9 @@ public class AddressBookService {
 				addId, addName, type));
 	}
 
-	public long countEntries(IOService ioService) {
+	public long countEntries(com.capg.addressBookService.AddressBookMain.IOService restIo) {
 		int result = 0;
-		if (ioService.equals(IOService.DB_IO)) {
+		if (restIo.equals(IOService.DB_IO)) {
 			result = contactList.size();
 		}
 		return result;
@@ -298,6 +298,14 @@ public class AddressBookService {
 			return false;
 		}
 		return true;
+	}
+	/**
+	 * Usecase23 : Adding multiple contacts to json server 
+	 * 
+	 * @param contact
+	 */
+	public void addContactToAddressBook(Contact contact) {
+		contactList.add(contact);
 	}
 }
 	
