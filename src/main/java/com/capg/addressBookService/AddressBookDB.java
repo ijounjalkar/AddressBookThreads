@@ -58,9 +58,9 @@ public class AddressBookDB {
 			contactList = this.getContactData(resultSet);
 			return contactList;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new DatabaseException("Unable to retrieve data");
 		}
-		return contactList;
+	
 	}
 	/**
 	 * Usecase17: Updating phone number of a persons in contact table
@@ -84,7 +84,7 @@ public class AddressBookDB {
 			contactStatement.setString(2, name);
 			result = contactStatement.executeUpdate();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DatabaseException("Unable to execute the update query on contact_table");
 		}	
 		return result;
 	}
@@ -113,7 +113,7 @@ public class AddressBookDB {
 			ResultSet resultSet = statement.executeQuery(sql);
 			contactList = this.getContactData(resultSet);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new DatabaseException("Unable to retrieve data from the contact_table");
 		}
 		return contactList;
 	}
@@ -167,7 +167,7 @@ public class AddressBookDB {
 	 */
 	public Contact addContact(String fname, String lname, String address, long zip, String city, String state,
 			long phone, String email, LocalDate date,int addId)
-			throws com.capgemini.addressbookdb.DatabaseException, SQLException {
+			throws com.capg.addressBookService.DatabaseException, SQLException {
 		int contactId = -1;
 		Connection connection = null;
 		Contact contact = null;
