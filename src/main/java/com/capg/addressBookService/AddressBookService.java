@@ -38,6 +38,10 @@ public class AddressBookService {
 	public AddressBookService() {
 		addressBookDB = AddressBookDB.getInstance();
 	}
+	public AddressBookService(List<Contact> list) {
+		this();
+		this.contactList = new ArrayList<>(list);
+	}
 
 	public void writeData(Map<String, AddressBook> addressBookMap) {
 		StringBuffer employeeBuffer = new StringBuffer();
@@ -162,19 +166,21 @@ public class AddressBookService {
 	 * @throws DatabaseException
 	 * @throws SQLException
 	 */
-	public void updatePersonsPhone(String name, long phone) throws DatabaseException, SQLException {
-		int result = addressBookDB.updatePersonsData(name, phone);
-		if (result == 0)
-			return;
+	public void updatePersonsPhone(String name, long phone,IOService ioService) throws DatabaseException, SQLException {
+		if (ioService.equals(IOService.DB_IO)) {
+			int result = addressBookDB.updatePersonsData(name, phone);
+			if (result == 0)
+				return;
+		}
 		Contact contact = this.getContact(name);
 		if (contact != null)
 			contact.phoneNumber = phone;
 	}
 
+
 	private Contact getContact(String name) {
-		String[] fullName = name.split(" ");
 		Contact contact = this.contactList.stream().filter(
-				contactData -> contactData.firstName.equals(fullName[0]) && contactData.lastName.equals(fullName[1]))
+				contactData -> contactData.firstName.equals(name))
 				.findFirst().orElse(null);
 		return contact;
 	}
@@ -306,6 +312,12 @@ public class AddressBookService {
 	 */
 	public void addContactToAddressBook(Contact contact) {
 		contactList.add(contact);
+	}
+	public void deleteContactFromAddressBook(String firstName, IOService ioService) {
+		if(ioService.equals(IOService.REST_IO)) {
+			Contact contact = this.getContact(firstName);
+			contactList.remove(contact);
+		}	
 	}
 }
 	

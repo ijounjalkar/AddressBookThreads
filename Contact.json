@@ -16,40 +16,6 @@
         "day": 1
       },
       "id": 3
-   },
-    {
-      "firstName": "Leena"
-      "lastName": "Sarode",
-      "address": "Panvel",
-      "city": "Mumabi"
-      "state": "Maharashtra",
-      "zip": 400019,
-      "phoneNumber": 9859629542
-      "email": "hjhgy@gmail.com",
-      "addId": 2,
-      "date": {
-        "year": 2021,
-        "month": 1,
-        "day": 1
-      },
-      "id": 2
-    },
-    {
-      "firstName": "Tushar",
-      "lastName": "Patil",
-      "address": "Shivaji Nagar",
-      "city": "Kohlapur",
-      "state": "Maharashtra",
-      "zip": 410554,
-      "phoneNumber": 9522698569
-      "email": "hjhvsgks@gmail.com",
-      "addId": 2,
-      "date": {
-        "year": 2021,
-        "month": 1,
-        "day": 1
-      },
-      "id": 3
     }
   ]
 }
