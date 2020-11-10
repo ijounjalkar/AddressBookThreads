@@ -183,4 +183,4 @@ public class AddressBookTest {
 		long count = addService.countEntries(IOService.REST_IO);
 		assertEquals(1,count);
 	}
-}
+
