@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.capg.addressBookService.AddressBookService.IOService;
 import com.opencsv.exceptions.CsvValidationException;
 
 	
@@ -157,7 +158,7 @@ import com.opencsv.exceptions.CsvValidationException;
 		 * 
 		 * @param ioService
 		 */
-		public void writeData(IOService ioService) {
+		public void writeData(IOService ioService) throws AddressBookException {
 			if (ioService.equals(IOService.FILE_IO)) {
 				new AddressBookService().writeData(addressBookMap);
 			}
@@ -168,12 +169,12 @@ import com.opencsv.exceptions.CsvValidationException;
 		 * 
 		 * @param ioService
 		 */
-		public void readData(IOService ioService) {
+		public void readData(IOService ioService) throws AddressBookException {
 			if (ioService.equals(IOService.FILE_IO)) {
 				new AddressBookService().readData();
 			}
 		}
-		public static void main(String[] args) throws CsvValidationException {
+		public static void main(String[] args) throws AddressBookException, CsvValidationException  {
 			Scanner scanner = new Scanner(System.in);
 			AddressBookMain addBookMain = new AddressBookMain();
 			int v;

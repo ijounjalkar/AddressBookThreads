@@ -43,7 +43,7 @@ public class AddressBookService {
 		this.contactList = new ArrayList<>(list);
 	}
 
-	public void writeData(Map<String, AddressBook> addressBookMap) {
+	public void writeData(Map<String, AddressBook> addressBookMap) throws AddressBookException  {
 		StringBuffer employeeBuffer = new StringBuffer();
 		for(Map.Entry<String, AddressBook> entry : addressBookMap.entrySet()) {
 			entry.getValue().getBook().forEach(contact -> {
@@ -54,14 +54,17 @@ public class AddressBookService {
 		try {
 			Files.write(Paths.get(PAYROLL_FILE_NAME), employeeBuffer.toString().getBytes());
 		} catch (IOException e) {
-			e.printStackTrace();
+			
+			throw new AddressBookException("Unable to write data to the text file");
 		}
 	}
-	public void readData() {
+	
+	public void readData() throws AddressBookException  {
 		try {
 			Files.lines(new File(PAYROLL_FILE_NAME).toPath()).forEach(System.out::println);
 		} catch (IOException e) {
-			e.printStackTrace();
+			
+			throw new AddressBookException("Unable to read data to the text file");
 		}
 	}
 	/**
@@ -69,7 +72,7 @@ public class AddressBookService {
 	 * 
 	 * @param cityBookMap
 	 */
-	public void writeDataToCSV(Map<String, AddressBook> cityBookMap) {
+	public void writeDataToCSV(Map<String, AddressBook> cityBookMap) throws AddressBookException {
 		Path path = Paths.get(CSV_FILE);
 		try {
 			FileWriter outputfile = new FileWriter(path.toFile());
@@ -82,7 +85,8 @@ public class AddressBookService {
 			}
 			writer.close();
 		} catch (IOException exception) {
-			exception.printStackTrace();
+			
+			throw new AddressBookException("Unable to write data to the csv file");
 		}
 	}
 
@@ -90,7 +94,7 @@ public class AddressBookService {
 	 * Reading data from the CSV file
 	 * @throws CsvValidationException 
 	 */
-	public void readDataFromCSV() throws CsvValidationException {
+	public void readDataFromCSV() throws AddressBookException, CsvValidationException {
 		try {
 			Reader fileReader = Files.newBufferedReader(Paths.get(CSV_FILE));
 			@SuppressWarnings("resource")
@@ -102,7 +106,8 @@ public class AddressBookService {
 						+ " Email: " + data[7]);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			
+			throw new AddressBookException("Unable to read data to the csv file");
 		}
 	}
 	/**
@@ -131,7 +136,7 @@ public class AddressBookService {
 	/**
 	 * Usecase15 using GSON reading from a JSON file
 	 */
-	public void readDataFromJSON() {
+	public void readDataFromJSON() throws AddressBookException {
 		Gson gson = new Gson();
 		try {
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(Paths.get(JSON_FILE).toFile()));
@@ -144,7 +149,7 @@ public class AddressBookService {
 				}
 			}
 		} catch (Exception exception) {
-			exception.printStackTrace();
+			throw new AddressBookException("Unable to read data from the json file");
 		}
 	}
 	/**
@@ -166,8 +171,8 @@ public class AddressBookService {
 	 * @throws DatabaseException
 	 * @throws SQLException
 	 */
-	public void updatePersonsPhone(String name, long phone,IOService ioService) throws DatabaseException, SQLException {
-		if (ioService.equals(IOService.DB_IO)) {
+	public void updatePersonsPhone(String name, long phone,com.capg.addressBookService.AddressBookMain.IOService restIo) throws DatabaseException, SQLException {
+		if (restIo.equals(IOService.DB_IO)) {
 			int result = addressBookDB.updatePersonsData(name, phone);
 			if (result == 0)
 				return;
@@ -178,7 +183,7 @@ public class AddressBookService {
 	}
 
 
-	private Contact getContact(String name) {
+	Contact getContact(String name) {
 		Contact contact = this.contactList.stream().filter(
 				contactData -> contactData.firstName.equals(name))
 				.findFirst().orElse(null);
@@ -219,7 +224,7 @@ public class AddressBookService {
                                      long phone, String email, LocalDate date, int addId, String addName, String type)
                                      throws SQLException, DatabaseException {
 		this.contactList.add(addressBookDB.addContact(fname, lname, address, zip, city, state, phone, email, date,
-				addId, addName, type));
+				addId));
 	}
 
 	/**
@@ -233,8 +238,7 @@ public class AddressBookService {
 				System.out.println("Contact Being Added: " + Thread.currentThread().getName());
 				try {
 					this.addContactDB(contact.firstName, contact.lastName, contact.address, contact.zip, contact.city,
-							contact.state, contact.phoneNumber, contact.email, contact.date, contact.addId,
-							contact.addName, contact.type);
+							contact.state, contact.phoneNumber, contact.email, contact.date, contact.addId);
 				} catch (SQLException | DatabaseException e) {
 					e.printStackTrace();
 				}
@@ -245,24 +249,20 @@ public class AddressBookService {
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				System.out.println(Thread.currentThread().getName()+" is interrupted");
 			}
 		});
 	}
 
 	private void addContactDB(String fname, String lname, String address, long zip, String city, String state,
-			long phone, String email, LocalDate date,int addId, String addName, String type)
+			long phone, String email, LocalDate date,int addId)
                               throws com.capg.addressBookService.DatabaseException, SQLException {
 		this.contactList.add(addressBookDB.addContact(fname, lname, address, zip, city, state, phone, email, date,
-				addId, addName, type));
+				addId));
 	}
 
-	public long countEntries(com.capg.addressBookService.AddressBookMain.IOService restIo) {
-		int result = 0;
-		if (restIo.equals(IOService.DB_IO)) {
-			result = contactList.size();
-		}
-		return result;
+	public long countEntries(com.capg.addressBookService.AddressBookMain.IOService dbIo) {
+		return contactList.size();
 	}
 
 	/**
@@ -275,7 +275,7 @@ public class AddressBookService {
 			Runnable task = () -> {
 				System.out.println("Contact Being Added: " + Thread.currentThread().getName());
 				try {
-					this.updatePersonsPhone(k, v);
+					this.updatePersonsPhone(k, v, null);
 				} catch (SQLException | DatabaseException e) {
 					e.printStackTrace();
 				}
@@ -313,8 +313,8 @@ public class AddressBookService {
 	public void addContactToAddressBook(Contact contact) {
 		contactList.add(contact);
 	}
-	public void deleteContactFromAddressBook(String firstName, IOService ioService) {
-		if(ioService.equals(IOService.REST_IO)) {
+	public void deleteContactFromAddressBook(String firstName, com.capg.addressBookService.AddressBookMain.IOService restIo) {
+		if(restIo.equals(IOService.REST_IO)) {
 			Contact contact = this.getContact(firstName);
 			contactList.remove(contact);
 		}	

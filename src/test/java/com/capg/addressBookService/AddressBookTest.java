@@ -38,7 +38,7 @@ public class AddressBookTest {
 	public void givenNewDataForContact_WhenUpdated_ShouldBeInSync() throws DatabaseException, SQLException {
 		AddressBookService addressBookService = new AddressBookService();
 		addressBookService.readContactData(IOService.DB_IO);
-		addressBookService.updatePersonsPhone("Isha Jounjalkar", 8850273350L);
+		addressBookService.updatePersonsPhone("Isha Jounjalkar", 8850273350L, null);
 		addressBookService.readContactData(IOService.DB_IO);
 		boolean result = addressBookService.checkContactDataSync("Isha Jounjalkar");
 		assertEquals(true, result);
@@ -46,7 +46,7 @@ public class AddressBookTest {
 
 	
 	@Test
-	public void givenContactInDB_WhenRetrievedForDateRange_ShouldMatchContactCount() throws DatabaseException {
+	public void givenContactInDB_WhenRetrievedForDateRange_ShouldMatchContactCount() throws DatabaseException, SQLException {
 		AddressBookService addressBookService = new AddressBookService();
 		addressBookService.readContactData(IOService.DB_IO);
 		List<Contact> resultList = addressBookService.getContactForDateRange(LocalDate.of(2020, 01, 01),
@@ -89,8 +89,8 @@ public class AddressBookTest {
 	@Test
 	public void geiven2Persons_WhenUpdatedPhoneNumer_ShouldSyncWithDB() throws DatabaseException, SQLException {
 		Map<String, Long> contactMap = new HashMap<>();
-		contactMap.put("Leena Sarode",985962954);
-		contactMap.put("Tushar Patil",952269856);
+		contactMap.put("Leena Sarode",(long) 985962954);
+		contactMap.put("Tushar Patil",(long) 952269856);
 		AddressBookService addressBookService = new AddressBookService();
 		addressBookService.readContactData(IOService.DB_IO);
 		Instant start = Instant.now();
@@ -183,4 +183,4 @@ public class AddressBookTest {
 		long count = addService.countEntries(IOService.REST_IO);
 		assertEquals(1,count);
 	}
-}
+
