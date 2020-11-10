@@ -173,7 +173,7 @@ public class AddressBookTest {
 	public void givenContactToDelete_WhenDeleted_ShouldMatch200ResponseAndCount() throws DatabaseException, SQLException {
 		Contact[] arrayOfContact = getContactList();
 		AddressBookService addService = new AddressBookService(Arrays.asList(arrayOfContact));
-		Contact contact = addService.getContact("Sachin");
+		Contact contact = addService.getContact("Tushar");
 		RequestSpecification request = RestAssured.given();
 		request.header("Content-Type","application/json");
 		Response response = request.delete("/contact/"+contact.id);
